@@ -1,11 +1,5 @@
 #!/usr/bin/python
 
-#TODO: fping task to check the node is there.
-
-#      possibly some task or check for connection?
-#      ---->nope, happy enough if fabric reports connection errors.
-#
-
 #TODO: make a task which calls puppet cert {list,clean,sign}, and convert
 #      the existing list_puppet_cert and clean_puppet_cert into wrappers.
 
