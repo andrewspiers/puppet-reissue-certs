@@ -41,10 +41,13 @@ def get_nodes(filename=nodefile, prepend_user=False, user=puppetuser):
           out.append(user + '@' + line.split(',')[0])
         else:
           out.append(line.split(',')[0])
-  for i in out:
-    print (i)
-  print out  
   return out
+
+@task
+@hosts(get_nodes(prepend_user=True))
+def get_puppet_status(user=puppetuser):
+  with settings(warn_only=True):
+    run('service puppet status')
 
 
 @task
