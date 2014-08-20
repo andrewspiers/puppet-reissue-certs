@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
+"""
+get_unreported.py
+
+scrape the puppet dashboard to find the nodes that have
+not recently reported to the puppetmaster.
+"""
 
 # <codecell>
 
