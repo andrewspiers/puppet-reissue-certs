@@ -75,7 +75,7 @@ def main():
       credential = netrc_credential(node)
       #http://www.python-requests.org/en/latest/user/quickstart/#more-complicated-post-requests
       payload = { 'j_username':credential.login, 'j_password':credential.password}
-      r2_url = r.url
+      r2_url = r.url  # r.url is different from url because we get redirected.
       r2 = requests.post(r2_url,data=payload,verify=False,cookies=r.cookies)
       soup2 = BeautifulSoup(r2.text)
       soup2forms = soup2.findAll('form')
