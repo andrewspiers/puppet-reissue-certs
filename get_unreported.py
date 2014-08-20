@@ -38,57 +38,9 @@ class netrc_credential(object):
                 sys.stderr.write(message)
                 sys.stderr.flush()
                 sys.exit(1)
-                    
-        
 
 # <codecell>
 
-protocol = 'https:/'
-node = 'puppet.vpac.org'
-#slug = 'nodes/unreported?per_page=all'
-slug = 'nodes/unreported.csv'
-url = '/'.join((protocol,node,slug))
-r = requests.get(url,verify=False)
-soup = BeautifulSoup(r.text)
-forms = soup.findAll('form')
-if not (forms[0].attrs['action'] == "/idp/Authn/UserPassword" and forms[0].attrs['method'] == "post"):
-    sys.stderr.write("unexpected response received\n")
-    sys.stderr.flush()
-    print("unexpected response received\n")
-    print forms[0]
-    print forms[0].attrs
-    
-    credential = netrc_credential(node)
-    #http://www.python-requests.org/en/latest/user/quickstart/#more-complicated-post-requests
-    payload = { 'j_username':credential.login, 'j_password':credential.password}
-    #r2_url = '/'.join((protocol,node,"idp/Authn/UserPassword"))
-    r2_url = r.url
-    r2 = requests.post(r2_url,data=payload,verify=False,cookies=r.cookies)
-    soup2 = BeautifulSoup(r2.text)
-    print(soup2)
-else:
-    credential = netrc_credential(node)
-    #http://www.python-requests.org/en/latest/user/quickstart/#more-complicated-post-requests
-    payload = { 'j_username':credential.login, 'j_password':credential.password}
-    #r2_url = '/'.join((protocol,node,"idp/Authn/UserPassword"))
-    r2_url = r.url
-    r2 = requests.post(r2_url,data=payload,verify=False,cookies=r.cookies)
-    soup2 = BeautifulSoup(r2.text)
-    #print(soup2)
-    soup2forms = soup2.findAll('form')
-    soup2inputs = soup2.findAll('input')
-       
-    r3url = soup2forms[0].attrs['action']
-    
-    inputs = soup2.findAll('input')
-    r3payload = dict()
-    for i in inputs:
-        if i.attrs['type'] == 'hidden':
-            r3payload[i.attrs['name']] = i.attrs['value']
-    r3 = requests.post(r3url,data=r3payload,verify=False,cookies=r2.cookies)
-    soup3 = BeautifulSoup(r3.text)
-    #print(soup3)
-    
 def getnode():
   """return then name of the puppet master, from reading the config file"""
   try:
@@ -104,10 +56,57 @@ def getnode():
     puppetmaster = puppetmaster_connection
   return puppetmaster
 
-# <codecell>
 
-unreportedcsv = soup3.find('p').text.split()[1:]
-#only need the first column
-unreported = [x.split(',')[0] for x in unreportedcsv]
-print unreported
+def main():
+  protocol = 'https:/'
+  node = getnode()
+  slug = 'nodes/unreported.csv'
+  url = '/'.join((protocol,node,slug))
+  r = requests.get(url,verify=False)
+  soup = BeautifulSoup(r.text)
+  forms = soup.findAll('form')
+  if not (forms[0].attrs['action'] == "/idp/Authn/UserPassword" and forms[0].attrs['method'] == "post"):
+      sys.stderr.write("unexpected response received\n")
+      sys.stderr.flush()
+      print("unexpected response received\n")
+      print forms[0]
+      print forms[0].attrs
+      credential = netrc_credential(node)
+      #http://www.python-requests.org/en/latest/user/quickstart/#more-complicated-post-requests
+      payload = { 'j_username':credential.login, 'j_password':credential.password}
+      #r2_url = '/'.join((protocol,node,"idp/Authn/UserPassword"))
+      r2_url = r.url
+      r2 = requests.post(r2_url,data=payload,verify=False,cookies=r.cookies)
+      soup2 = BeautifulSoup(r2.text)
+      print(soup2)
+  else:
+      credential = netrc_credential(node)
+      #http://www.python-requests.org/en/latest/user/quickstart/#more-complicated-post-requests
+      payload = { 'j_username':credential.login, 'j_password':credential.password}
+      #r2_url = '/'.join((protocol,node,"idp/Authn/UserPassword"))
+      r2_url = r.url
+      r2 = requests.post(r2_url,data=payload,verify=False,cookies=r.cookies)
+      soup2 = BeautifulSoup(r2.text)
+      #print(soup2)
+      soup2forms = soup2.findAll('form')
+      soup2inputs = soup2.findAll('input')
+      r3url = soup2forms[0].attrs['action']
+      inputs = soup2.findAll('input')
+      r3payload = dict()
+      for i in inputs:
+          if i.attrs['type'] == 'hidden':
+              r3payload[i.attrs['name']] = i.attrs['value']
+      r3 = requests.post(r3url,data=r3payload,verify=False,cookies=r2.cookies)
+      soup3 = BeautifulSoup(r3.text)
+      #print(soup3)
 
+  # <codecell>
+
+  unreportedcsv = soup3.find('p').text.split()[1:]
+  #only need the first column
+  unreported = [x.split(',')[0] for x in unreportedcsv]
+  print unreported
+
+
+if __name__ == "__main__":
+  main()
