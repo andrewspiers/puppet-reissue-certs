@@ -75,11 +75,9 @@ def main():
       credential = netrc_credential(node)
       #http://www.python-requests.org/en/latest/user/quickstart/#more-complicated-post-requests
       payload = { 'j_username':credential.login, 'j_password':credential.password}
-      #r2_url = '/'.join((protocol,node,"idp/Authn/UserPassword"))
       r2_url = r.url
       r2 = requests.post(r2_url,data=payload,verify=False,cookies=r.cookies)
       soup2 = BeautifulSoup(r2.text)
-      #print(soup2)
       soup2forms = soup2.findAll('form')
       soup2inputs = soup2.findAll('input')
       r3url = soup2forms[0].attrs['action']
@@ -90,9 +88,7 @@ def main():
               r3payload[i.attrs['name']] = i.attrs['value']
       r3 = requests.post(r3url,data=r3payload,verify=False,cookies=r2.cookies)
       soup3 = BeautifulSoup(r3.text)
-      #print(soup3)
 
-  # <codecell>
 
   unreportedcsv = soup3.find('p').text.split()[1:]
   #only need the first column
