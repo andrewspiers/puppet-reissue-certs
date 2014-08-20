@@ -71,14 +71,6 @@ def main():
       print("unexpected response received\n")
       print forms[0]
       print forms[0].attrs
-      credential = netrc_credential(node)
-      #http://www.python-requests.org/en/latest/user/quickstart/#more-complicated-post-requests
-      payload = { 'j_username':credential.login, 'j_password':credential.password}
-      #r2_url = '/'.join((protocol,node,"idp/Authn/UserPassword"))
-      r2_url = r.url
-      r2 = requests.post(r2_url,data=payload,verify=False,cookies=r.cookies)
-      soup2 = BeautifulSoup(r2.text)
-      print(soup2)
   else:
       credential = netrc_credential(node)
       #http://www.python-requests.org/en/latest/user/quickstart/#more-complicated-post-requests
