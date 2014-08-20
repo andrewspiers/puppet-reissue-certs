@@ -6,16 +6,12 @@ scrape the puppet dashboard to find the nodes that have
 not recently reported to the puppetmaster.
 """
 
-# <codecell>
-
 import requests
 from bs4 import BeautifulSoup
 
 import ConfigParser
 import os
 import sys
-
-# <codecell>
 
 class netrc_credential(object):
     def __init__(self,machine):
@@ -38,8 +34,6 @@ class netrc_credential(object):
                 sys.stderr.write(message)
                 sys.stderr.flush()
                 sys.exit(1)
-
-# <codecell>
 
 def getnode():
   """return then name of the puppet master, from reading the config file"""
