@@ -51,7 +51,7 @@ def getnode():
   return puppetmaster
 
 
-def main():
+def get_unreported():
   protocol = 'https:/'
   node = getnode()
   slug = 'nodes/unreported.csv'
@@ -87,8 +87,11 @@ def main():
   unreportedcsv = soup3.find('p').text.split()[1:]
   #only need the first column
   unreported = [x.split(',')[0] for x in unreportedcsv]
-  print unreported
+  return unreported
 
+def main():
+  unreported = get_unreported()
+  print unreported
 
 if __name__ == "__main__":
   main()
