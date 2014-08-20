@@ -11,6 +11,7 @@ not recently reported to the puppetmaster.
 import requests
 from bs4 import BeautifulSoup
 
+import ConfigParser
 import os
 import sys
 
@@ -88,6 +89,20 @@ else:
     soup3 = BeautifulSoup(r3.text)
     #print(soup3)
     
+def getnode():
+  """return then name of the puppet master, from reading the config file"""
+  try:
+    configfile = os.environ['GET-UNREPORTED-RC']
+  except KeyError:
+    configfile = 'puppet-reissue-certs.conf'
+  config = ConfigParser.SafeConfigParser()
+  config.read(configfile)
+  puppetmaster_connection = config.get('main','puppetmaster')
+  if '@' in puppetmaster_connection:
+    puppetmaster = puppetmaster_connection.split('@')[1]
+  else:
+    puppetmaster = puppetmaster_connection
+  return puppetmaster
 
 # <codecell>
 
