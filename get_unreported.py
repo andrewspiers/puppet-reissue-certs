@@ -93,7 +93,6 @@ def main():
   unreported = get_unreported()
   if len(unreported) > 0:
     unreported.sort()
-    print "There are " + str(len(unreported)) + " unreported nodes:\n\n"
 
     for i in unreported:
       print i
