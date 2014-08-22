@@ -58,17 +58,23 @@ def get_unreported_nodes(prepend_user=True, user=puppetuser):
 @task
 @hosts(get_nodes(prepend_user=True))
 def get_puppet_status(user=puppetuser):
+  """Log into hosts from the pre-existing list of files in the nodefile,
+  and check that the puppet service is running."""
   with settings(warn_only=True):
     run('service puppet status')
 
 @task
 @hosts(get_unreported_nodes())
 def get_puppet_status2(user=puppetuser):
+  """Log into those nodes that the puppet dashboard reports as unreported,
+  and check that the puppet service is running."""
   with settings(warn_only=True):
     run('service puppet status')
 
 @task
 def remove_puppet_ssl():
+  """Remove puppet /var/lib/ssl for a node, then rerun puppet to generate
+  a new certificate and submit it for signing."""
   #settings imported from fabric.api. Do not abort on nonzero exit status.
   with settings(warn_only=True):
     #run imported from fabric.api
@@ -80,11 +86,12 @@ def remove_puppet_ssl():
 @task
 @hosts(env.roledefs['puppetmaster'])
 def list_puppet_cert(qn=None):
+  """Run 'puppet cert list $querynode' on the puppetmaster 
+  querynode could/should be defined in the commmand line like
+  fab --set querynode=host.example.com list_puppet_cert
+  """
   if qn is None:
     qn = env.querynode
-  #run 'puppet cert list $querynode' on the puppetmaster 
-  #querynode could/should be defined in the commmand line like
-  #fab --set querynode=host.example.com list_puppet_cert
   command = "puppet cert list " + qn
   run(command)
 
